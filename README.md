@@ -10,7 +10,3 @@ To use this clone this repository:
 ```
 git clone https://github.com/realizer5/pdf-merger
 ```
-and run:
-```
-npm i
-```
