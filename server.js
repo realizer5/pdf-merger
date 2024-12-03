@@ -27,6 +27,28 @@ app.post('/merge', upload.array('pdfs'), async function(req, res, next) {
         const fileName = path.basename(pdfArray[0], path.extname(pdfArray[0]))
         await merge(pdfArray, pagesArray, fileName)
         res.redirect(`http://localhost:${port}/static/${fileName}.pdf`);
+        fs.readdir(path.join(__dirname, 'output'), (err, data) => {
+            if (err) {
+                console.log("error while deleting output file", err);
+            } else {
+                let index = data.indexOf(`${fileName}.pdf`);
+                data.splice(index, 1);
+                if (data.length > 100) {
+                    data.forEach(item => {
+                        fs.unlinkSync(path.join(__dirname, `output/${item}`));
+                    });
+                }
+            }
+        })
+        fs.readdir(path.join(__dirname, 'uploads'), (err, data) => {
+            if (err) {
+                console.log("error while deleting uploads", err)
+            } else {
+                data.forEach(item => {
+                    fs.unlinkSync(path.join(__dirname, `uploads/${item}`));
+                });
+            }
+        })
     } catch (error) {
         console.error('Error during merge:', error);
         res.status(500).send('An error occurred while merging the PDFs. Make sure you input valid details');
